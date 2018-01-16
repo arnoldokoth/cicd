@@ -1,0 +1,19 @@
+---
+- hosts: production
+  name: Docker Configuration
+  sudo: yes
+  tasks:
+  - name: Ensure Docker Is Installed
+    yum: name=docker state=present
+    when: ansible_os_family == "RedHat"
+  - name: Ensure Docker Is Running
+    service: name=docker state=started
+    when: ansible_os_family == "RedHat"
+- hosts: staging
+  name: Deploy Application
+  user: ec2-user
+  tasks:
+  - name: Stop Currently Running Application
+    raw: "docker stop web"
+  - name: Deploy Latest Application Version
+    raw: "docker run --name web -d -p 5000:5000 984084214586.dkr.ecr.us-east-1.amazonaws.com/staging:latest"
