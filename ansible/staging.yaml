@@ -3,6 +3,10 @@
   name: Docker Configuration
   sudo: yes
   tasks:
+  - name: Update Cache & Install Docker
+    raw: "sudo yum update -y && sudo yum install docker -y"
+  - name: Add User To Docker Group
+    raw: "sudo usermod -a -G docker ec2-user"
   - name: Ensure Docker Is Installed
     yum: name=docker state=present
     when: ansible_os_family == "RedHat"
