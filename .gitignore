@@ -3,7 +3,7 @@ __pycache__/**
 **/__pycache__/
 
 # Infrastructure
-.infrastructure/terraform.tfstate
-.infrastructure/terraform.tfstate.backup
-.infrastructure/terraform.tfvars
-.infrastructure/.terraform/*
+infrastructure/.terraform/
+infrastructure/terraform.tfstate
+infrastructure/terraform.tfstate.backup
+infrastructure/terraform.tfvars
