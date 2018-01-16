@@ -1,12 +1,9 @@
 node {
     checkout scm
 
-    stage('Create Virtual Environment') {
+    stage('Create Virtual Environment & Install Requirements') {
         sh 'virtualenv test'
         sh 'source test/bin/activate'
-    }
-
-    stage('Install Project Requirements') {
         sh 'make install'
     }
 
