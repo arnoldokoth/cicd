@@ -20,23 +20,35 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_subnet" "public" {
+resource "aws_subnet" "public1" {
   cidr_block              = "${cidrsubnet(var.network_address_space, 8, 0)}"
   vpc_id                  = "${aws_vpc.vpc.id}"
   map_public_ip_on_launch = "true"
   availability_zone       = "${data.aws_availability_zones.available.names[0]}"
 
   tags {
-    Name      = "Public Subnet"
+    Name      = "Public Subnet 1"
+    Terraform = "true"
+  }
+}
+
+resource "aws_subnet" "public2" {
+  cidr_block              = "${cidrsubnet(var.network_address_space, 8, 1)}"
+  vpc_id                  = "${aws_vpc.vpc.id}"
+  map_public_ip_on_launch = "true"
+  availability_zone       = "${data.aws_availability_zones.available.names[1]}"
+
+  tags {
+    Name      = "Public Subnet 2"
     Terraform = "true"
   }
 }
 
 resource "aws_subnet" "private1" {
-  cidr_block              = "${cidrsubnet(var.network_address_space, 8, 1)}"
+  cidr_block              = "${cidrsubnet(var.network_address_space, 8, 2)}"
   vpc_id                  = "${aws_vpc.vpc.id}"
   map_public_ip_on_launch = "false"
-  availability_zone       = "${data.aws_availability_zones.available.names[1]}"
+  availability_zone       = "${data.aws_availability_zones.available.names[2]}"
 
   tags {
     Name      = "Private Subnet 1"
@@ -45,10 +57,10 @@ resource "aws_subnet" "private1" {
 }
 
 resource "aws_subnet" "private2" {
-  cidr_block              = "${cidrsubnet(var.network_address_space, 8,  2)}"
+  cidr_block              = "${cidrsubnet(var.network_address_space, 8, 3)}"
   vpc_id                  = "${aws_vpc.vpc.id}"
   map_public_ip_on_launch = "false"
-  availability_zone       = "${data.aws_availability_zones.available.names[2]}"
+  availability_zone       = "${data.aws_availability_zones.available.names[3]}"
 
   tags {
     Name      = "Private Subnet 2"
@@ -70,8 +82,13 @@ resource "aws_route_table" "rtb_public" {
   }
 }
 
-resource "aws_route_table_association" "rta_public" {
-  subnet_id      = "${aws_subnet.public.id}"
+resource "aws_route_table_association" "rta_public1" {
+  subnet_id      = "${aws_subnet.public1.id}"
+  route_table_id = "${aws_route_table.rtb_public.id}"
+}
+
+resource "aws_route_table_association" "rta_public2" {
+  subnet_id      = "${aws_subnet.public2.id}"
   route_table_id = "${aws_route_table.rtb_public.id}"
 }
 
@@ -81,7 +98,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "ngw" {
   allocation_id = "${aws_eip.nat.id}"
-  subnet_id     = "${aws_subnet.public.id}"
+  subnet_id     = "${aws_subnet.public1.id}"
 
   tags {
     Name      = "CI/CD NAT Gateway"

@@ -1,5 +1,6 @@
 # Security Groups
 resource "aws_security_group" "jenkins_sg" {
+  name = "jenkins-sg"
   vpc_id = "${aws_vpc.vpc.id}"
 
   # ALLOW SSH ACCESS FROM MY IP
@@ -7,7 +8,7 @@ resource "aws_security_group" "jenkins_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["197.176.137.116/32"]
+    cidr_blocks = ["105.27.99.66/32"]
   }
 
   # ALLOW HTTP ACCESS TO BUILD SERVER FROM MY IP
@@ -15,7 +16,14 @@ resource "aws_security_group" "jenkins_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["197.176.137.116/32"]
+    cidr_blocks = ["105.27.99.66/32"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["105.27.99.66/32"]
   }
 
   egress {
@@ -32,6 +40,7 @@ resource "aws_security_group" "jenkins_sg" {
 }
 
 resource "aws_security_group" "elb" {
+    name = "elb-sg"
     vpc_id = "${aws_vpc.vpc.id}"
 
     # ALLOW WEB ACCESS FROM EVERYWHERE
@@ -56,13 +65,21 @@ resource "aws_security_group" "elb" {
 }
 
 resource "aws_security_group" "server" {
+    name = "server-sg"
     vpc_id = "${aws_vpc.vpc.id}"
 
     ingress {
         from_port = 80
         to_port = 80
         protocol = "tcp"
-        security_groups = ["${aws_security_group.elb.id}"]
+        security_groups = ["${var.network_address_space}"]
+    }
+
+    ingress {
+        from_port = 22
+        to_port = 22
+        protocol = "tcp"
+        cidr_blocks = ["${var.network_address_space}"]
     }
 
     egress {

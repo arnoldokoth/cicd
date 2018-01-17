@@ -1,10 +1,9 @@
 resource "aws_instance" "jenkins" {
   ami                    = "ami-cb9ec1b1"
   instance_type          = "t2.micro"
-  subnet_id              = "${aws_subnet.public.id}"
+  subnet_id              = "${aws_subnet.public1.id}"
   vpc_security_group_ids = ["${aws_security_group.jenkins_sg.id}"]
   key_name               = "${var.key_name}"
-
 
   connection {
     user        = "ec2-user"
@@ -16,9 +15,14 @@ resource "aws_instance" "jenkins" {
     inline = [
       "sudo yum update -y",
       "sudo yum install docker -y",
+      "sudo yum remove java-1.7.0-openjdk",
+      "sudo yum install java-1.8.0",
+      "sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo",
+      "sudo rpm --import http://pkg.jenkins-ci.org/redhat-stable/jenkins-ci.org.key",
+      "sudo yum install jenkins -y",
+      "sudo service jenkins start",
       "sudo service docker start",
       "sudo usermod -a -G docker ec2-user",
-      "sudo docker run -d -p 80:8080 --name jenkins jenkinsci/blueocean",
     ]
   }
 
@@ -35,25 +39,10 @@ resource "aws_instance" "staging1" {
     subnet_id = "${aws_subnet.private1.id}"
     vpc_security_group_ids = ["${aws_security_group.server.id}"]
     key_name = "${var.key_name}"
-    private_ip = "10.1.1.10"
-
-    connection {
-        user = "ec2-user"
-        private_key = "${file(var.private_key_path)}"
-        agent = false
-    }
-
-    provisioner "remote-exec" {
-        inline = [
-            "sudo yum update -y",
-            "sudo yum install docker -y",
-            "sudo service docker start",
-            "sudo usermod -a -G docker ec2-user"
-        ]
-    }
+    private_ip = "10.1.2.10"
 
     tags {
-        Name = "Web Server 1"
+        Name = "Staging Server 1"
         Environment = "Staging"
         Terraform = "true"
     }
@@ -65,25 +54,10 @@ resource "aws_instance" "staging2" {
     subnet_id = "${aws_subnet.private2.id}"
     vpc_security_group_ids = ["${aws_security_group.server.id}"]
     key_name = "${var.key_name}"
-    private_ip = "10.1.2.10"
-
-    connection {
-        user = "ec2-user"
-        private_key = "${file(var.private_key_path)}"
-        agent = false
-    }
-
-    provisioner "remote-exec" {
-        inline = [
-            "sudo yum update -y",
-            "sudo yum install docker -y",
-            "sudo service docker start",
-            "sudo usermod -a -G docker ec2-user"
-        ]
-    }
+    private_ip = "10.1.3.10"
 
     tags {
-        Name = "Web Server 2"
+        Name = "Staging Server 2"
         Environment = "Staging"
         Terraform = "true"
     }
@@ -91,7 +65,9 @@ resource "aws_instance" "staging2" {
 
 # STAGING ELB
 resource "aws_elb" "staging" {
-    availability_zones = ["${data.aws_availability_zones.available.names[1]}", "${data.aws_availability_zones.available.names[2]}"]
+    name = "staging-elb"
+    subnets = ["${aws_subnet.public1.id}"]
+    security_groups = ["${aws_security_group.elb.id}"]
 
     listener {
         instance_port = 5000
@@ -129,22 +105,7 @@ resource "aws_instance" "prod1" {
     subnet_id = "${aws_subnet.private1.id}"
     vpc_security_group_ids = ["${aws_security_group.server.id}"]
     key_name = "${var.key_name}"
-    private_ip = "10.1.1.20"
-
-    connection {
-        user = "ec2-user"
-        private_key = "${file(var.private_key_path)}"
-        agent = false
-    }
-
-    provisioner "remote-exec" {
-        inline = [
-            "sudo yum update -y",
-            "sudo yum install docker -y",
-            "sudo service docker start",
-            "sudo usermod -a -G docker ec2-user"
-        ]
-    }
+    private_ip = "10.1.2.20"
 
     tags {
         Name = "Production Server 1"
@@ -159,22 +120,7 @@ resource "aws_instance" "prod2" {
     subnet_id = "${aws_subnet.private2.id}"
     vpc_security_group_ids = ["${aws_security_group.server.id}"]
     key_name = "${var.key_name}"
-    private_ip = "10.1.2.20"
-
-    connection {
-        user = "ec2-user"
-        private_key = "${file(var.private_key_path)}"
-        agent = false
-    }
-
-    provisioner "remote-exec" {
-        inline = [
-            "sudo yum update -y",
-            "sudo yum install docker -y",
-            "sudo service docker start",
-            "sudo usermod -a -G docker ec2-user"
-        ]
-    }
+    private_ip = "10.1.3.20"
 
     tags {
         Name = "Production Server 2"
@@ -185,7 +131,9 @@ resource "aws_instance" "prod2" {
 
 # PRODUCTION ELB
 resource "aws_elb" "prod" {
-    availability_zones = ["${data.aws_availability_zones.available.names[1]}", "${data.aws_availability_zones.available.names[2]}"]
+    name = "prod-elb"
+    subnets = ["${aws_subnet.public1.id}"]
+    security_groups = ["${aws_security_group.elb.id}"]
 
     listener {
         instance_port = 5000
