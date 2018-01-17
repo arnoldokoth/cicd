@@ -3,8 +3,8 @@
   name: Docker Configuration
   sudo: yes
   tasks:
-  - name: Update Cache & Install Docker
-    raw: "sudo yum update -y && sudo yum install docker -y"
+  - name: Update Cache
+    raw: "sudo yum update -y"
   - name: Add User To Docker Group
     raw: "sudo usermod -a -G docker ec2-user"
   - name: Ensure Docker Is Installed
@@ -13,11 +13,11 @@
   - name: Ensure Docker Is Running
     service: name=docker state=started
     when: ansible_os_family == "RedHat"
-- hosts: staging
+- hosts: production
   name: Deploy Application
   user: ec2-user
   tasks:
-  - name: Stop Currently Running Application
-    raw: "docker stop web"
+  - name: ECR Login
+    raw: "$(aws ecr get-login --no-include-email --region us-east-1)"
   - name: Deploy Latest Application Version
     raw: "docker run --name web -d -p 5000:5000 984084214586.dkr.ecr.us-east-1.amazonaws.com/prod:latest"
