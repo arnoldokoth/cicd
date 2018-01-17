@@ -26,3 +26,16 @@ tag_prod:
 
 deploy_stg:
 	ansible-playbook -i ansible/hosts ansible/staging.yaml
+
+# Terraform
+vars:
+	cp infrastructure/terraform.tfvars.template infrastructure/terraform.tfvars
+
+plan:
+	cd infrastructure/ && terraform plan
+
+apply:
+	cd infrastructure/ && terraform apply
+
+destroy:
+	cd infrastructure/ && terraform destroy
