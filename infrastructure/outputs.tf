@@ -2,10 +2,10 @@ output "jenkins_public_dns" {
   value = "${aws_instance.jenkins.public_dns}"
 }
 
-output "staging_elb_dns" {
-    value = "${aws_elb.staging.dns_name}"
+output "staging_public_dns" {
+    value = "${aws_instance.staging1.public_dns}"
 }
 
-output "production_elb_dns" {
-    value = "${aws_elb.prod.dns_name}"
+output "prod_public_dns" {
+    value = "${aws_instance.prod1.public_dns}"
 }
