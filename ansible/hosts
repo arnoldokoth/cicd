@@ -1,16 +1,11 @@
-staging1 ansible_ssh_host=10.1.2.10
-staging2 ansible_ssh_host=10.1.3.10
-
-production1 ansible_ssh_host=10.1.2.20
-production2 ansible_ssh_host=10.1.3.20
+staging1 ansible_ssh_host=10.1.0.10
+production1 ansible_ssh_host=10.1.1.10
 
 [staging]
 staging1
-staging2
 
 [production]
 production1
-production2
 
 [servers:children]
 staging
