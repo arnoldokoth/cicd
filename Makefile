@@ -27,6 +27,9 @@ tag_prod:
 deploy_stg:
 	ansible-playbook -i ansible/hosts ansible/staging.yaml
 
+deploy_prod:
+	ansible-playbook -i ansible/hosts ansible/production.yaml
+
 # Terraform
 vars:
 	cp infrastructure/terraform.tfvars.template infrastructure/terraform.tfvars
