@@ -4,7 +4,7 @@ install:
 
 # Run Project Unit Tests
 test:
-	cd app && nosetests -v
+	python app/tests/test_dummies.py
 
 # Build Staging Image
 build_stg:
