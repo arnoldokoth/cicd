@@ -17,13 +17,13 @@ build_prod:
 # Tag & Push Staging Image
 tag_stg:
 	sudo docker tag staging:latest 984084214586.dkr.ecr.us-east-1.amazonaws.com/staging:latest
-	sudo $(aws ecr get-login --no-include-email --region us-east-1)
+	$(aws ecr get-login --no-include-email --region us-east-1)
 	sudo docker push 984084214586.dkr.ecr.us-east-1.amazonaws.com/staging:latest
 
 # Tag & Push Production Image
 tag_prod:
 	sudo docker tag prod:latest 984084214586.dkr.ecr.us-east-1.amazonaws.com/prod:latest
-	sudo $(aws ecr get-login --no-include-email --region us-east-1)
+	$(aws ecr get-login --no-include-email --region us-east-1)
 	sudo docker push 984084214586.dkr.ecr.us-east-1.amazonaws.com/prod:latest
 
 deploy_stg:
