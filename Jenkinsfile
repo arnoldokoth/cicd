@@ -4,7 +4,7 @@ node {
     stage('Create Virtual Environment & Install Requirements') {
         sh 'virtualenv test'
         sh 'source test/bin/activate'
-        sh 'pip install -r requirements.txt'
+        sh 'sudo pip install -r requirements.txt'
     }
 
     stage('Test') {
