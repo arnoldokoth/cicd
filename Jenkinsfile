@@ -2,7 +2,8 @@ node {
     checkout scm
 
     stage('Create Virtual Environment & Install Requirements') {
-        sh 'source ~/tests/bin/activate'
+        sh 'virtualenv test'
+        sh 'source test/bin/activate'
         sh 'pip install -r requirements.txt'
     }
 
