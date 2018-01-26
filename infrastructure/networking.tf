@@ -21,7 +21,7 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_subnet" "public1" {
-  cidr_block              = "${cidrsubnet(var.network_address_space, 8, 0)}" # 10.1.0.0/24
+  cidr_block              = "${cidrsubnet(var.network_address_space, 8, 0)}"    # 10.1.0.0/24
   vpc_id                  = "${aws_vpc.vpc.id}"
   map_public_ip_on_launch = "true"
   availability_zone       = "${data.aws_availability_zones.available.names[0]}"
@@ -33,7 +33,7 @@ resource "aws_subnet" "public1" {
 }
 
 resource "aws_subnet" "public2" {
-  cidr_block              = "${cidrsubnet(var.network_address_space, 8, 1)}" # 10.1.1.0/24
+  cidr_block              = "${cidrsubnet(var.network_address_space, 8, 1)}"    # 10.1.1.0/24
   vpc_id                  = "${aws_vpc.vpc.id}"
   map_public_ip_on_launch = "true"
   availability_zone       = "${data.aws_availability_zones.available.names[1]}"
