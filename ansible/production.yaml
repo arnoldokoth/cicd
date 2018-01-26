@@ -5,11 +5,11 @@
   tasks:
   - name: Update Cache
     raw: "sudo yum update -y"
-  - name: Add User To Docker Group
-    raw: "sudo usermod -a -G docker ec2-user"
   - name: Ensure Docker Is Installed
     yum: name=docker state=present
     when: ansible_os_family == "RedHat"
+  - name: Add User To Docker Group
+    raw: "sudo usermod -a -G docker ec2-user"
   - name: Ensure Docker Is Running
     service: name=docker state=started
     when: ansible_os_family == "RedHat"
