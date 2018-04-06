@@ -1,0 +1,21 @@
+resource "aws_iam_role_policy" "ecs_iam_role_policy" {
+    name = "ecs_iam_role"
+    policy = <<EOF
+    {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+        "Sid": "Stmt1516111962093",
+        "Action": "ecr:*",
+        "Effect": "Allow",
+        "Resource": "arn:aws:ecr:us-east-1:984084214586:repository/cicd"
+        }
+    ]
+    }
+    EOF
+}
+
+resource "aws_iam_instance_profile" "ecs_instance_profile" {
+    name = "ecs_instance_profile"
+    roles = ["ecs_iam_role"]
+}

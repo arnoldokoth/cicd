@@ -1,0 +1,15 @@
+staging1 ansible_ssh_host=10.1.0.10
+production1 ansible_ssh_host=10.1.1.10
+
+[staging]
+staging1
+
+[production]
+production1
+
+[servers:children]
+staging
+production
+
+[servers:vars]
+ansible_ssh_user=ec2-user
